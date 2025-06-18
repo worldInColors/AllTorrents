@@ -8,8 +8,9 @@ export function FilterProvider({ children }) {
     const [sortBy, setSortBy] = useState("");
     const [sortOrder, setSortOrder] = useState("desc");
     const [sourceFilter, setSourceFilter] = useState("");
-    const [sources,setSources] = useState([])
+    const [sources, setSources] = useState([]);
     const [seriesTypeFilter, setSeriesTypeFilter] = useState("all");
+    const [categoryFilter, setCategoryFilter] = useState("all");
     const value = {
         openFilterModal,
         setOpenFilterModal,
@@ -23,7 +24,9 @@ export function FilterProvider({ children }) {
         sources,
         setSources,
         seriesTypeFilter,
-        setSeriesTypeFilter
+        setSeriesTypeFilter,
+        categoryFilter,
+        setCategoryFilter,
     };
     return (
         <filterContext.Provider value={value}>

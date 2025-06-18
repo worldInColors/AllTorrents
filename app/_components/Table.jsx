@@ -27,8 +27,6 @@ export default function Table({ results }) {
     );
 }
 
-
-
 function getTorrentDownloadUrl(data) {
     // Priority 1: Extract direct torrent URL from description
     if (data.Description && typeof data.Description === "string") {
@@ -50,6 +48,9 @@ function getTorrentDownloadUrl(data) {
 
         // Add other trackers as needed
         // if (data.Details.includes('other-tracker.com')) { ... }
+        if (data.TrackerId === "anidex") {
+            return data.Guid;
+        }
     }
 
     return null;
@@ -71,7 +72,7 @@ function TableRow({ data }) {
         <tr>
             <td className="px-3 py-4 border border-gray-700">
                 <span
-                title={data.Tracker}
+                    title={data.Tracker}
                     className={`inline-block text-white text-xs font-semibold px-2 py-1 rounded truncate max-w-24  ${getTrackerStyle(
                         data.Tracker
                     )}`}
@@ -79,7 +80,7 @@ function TableRow({ data }) {
                     {data.Tracker}
                 </span>
             </td>
-            <td className="px-3 py-4 text-blue-300 hover:underline cursor-pointer text-base max-w-[50rem] border border-gray-700" >
+            <td className="px-3 py-4 text-blue-300 hover:underline cursor-pointer text-base max-w-[50rem] border border-gray-700">
                 {data.Title}
             </td>
             <td className="px-3 py-4 border border-gray-700">

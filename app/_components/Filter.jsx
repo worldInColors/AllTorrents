@@ -13,9 +13,10 @@ function Filter() {
         sourceFilter,
         setSourceFilter,
         sources,
-        setSources,
         seriesTypeFilter,
-        setSeriesTypeFilter
+        setSeriesTypeFilter,
+        setCategoryFilter,
+        categoryFilter,
     } = useFilter();
     return (
         <>
@@ -26,7 +27,10 @@ function Filter() {
                 />
             </div>
             {openFilterModal && (
-                <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"  onClick={() => setOpenFilterModal(false)}>
+                <div
+                    className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
+                    onClick={() => setOpenFilterModal(false)}
+                >
                     <div
                         onClick={(e) => e.stopPropagation()}
                         className="bg-gray-700 rounded-xl shadow-lg p-6 relative w-[90%] max-w-2xl "
@@ -101,22 +105,49 @@ function Filter() {
                                         ))}
                                     </select>
                                 </div>
-                                 <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-300 mb-2">
-        Series Type
-      </label>
-      <select
-        value={seriesTypeFilter}
-        onChange={(e) => setSeriesTypeFilter(e.target.value)}
-        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100"
-      >
-        <option value="all">All Types</option>
-  <option value="single-episode">Single Episodes</option>
-  <option value="season-batch">Season/Batch</option>
-  <option value="full-series">Complete Series</option>
-  <option value="movie">Movies</option>
-      </select>
-    </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Series Type
+                                    </label>
+                                    <select
+                                        value={seriesTypeFilter}
+                                        onChange={(e) =>
+                                            setSeriesTypeFilter(e.target.value)
+                                        }
+                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100"
+                                    >
+                                        <option value="all">All Types</option>
+                                        <option value="single-episode">
+                                            Single Episodes
+                                        </option>
+                                        <option value="season-batch">
+                                            Season/Batch
+                                        </option>
+                                        <option value="full-series">
+                                            Complete Series
+                                        </option>
+                                    </select>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Category
+                                    </label>
+                                    <select
+                                        value={categoryFilter}
+                                        onChange={(e) =>
+                                            setCategoryFilter(e.target.value)
+                                        }
+                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100"
+                                    >
+                                        <option value="all">
+                                            All Categories
+                                        </option>
+                                        <option value="anime">Anime</option>
+                                        <option value="movie">Movies</option>
+                                        <option value="book">Books</option>
+                                        <option value="music">Music</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>

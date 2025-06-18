@@ -14,92 +14,97 @@ import { useFilteredResults } from "./hooks/useFilteredResults";
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 function SimpleSpinner() {
-  return (
-    <div className="flex justify-center py-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-    </div>
-  );
+    return (
+        <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+    );
 }
 
 function Page() {
-  const [query, setQuery] = useState("");
-  const [searchUrl, setSearchUrl] = useState(null);
-  const {
-    sortBy,
-    sortOrder,
-    sourceFilter,
-    setSources,
-    seriesTypeFilter,
+    const [query, setQuery] = useState("");
+    const [searchUrl, setSearchUrl] = useState(null);
+    const {
+        sortBy,
+        sortOrder,
+        sourceFilter,
+        setSources,
+        seriesTypeFilter,
+        categoryFilter,
+    } = useFilter();
 
-  } = useFilter();
+    const {
+        data: searchData,
+        isLoading,
+        error,
+    } = useSWR(searchUrl, fetcher, {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        refreshInterval: 0,
+        dedupingInterval: 7200000,
+        onSuccess: (data) => {
+            const indexers = data.indexers.map((indexer) => indexer.name);
+            setSources(indexers);
+        },
+    });
 
-  const { data: searchData, isLoading, error } = useSWR(searchUrl, fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    refreshInterval: 0,
-    dedupingInterval: 7200000,
-    onSuccess: (data) => {
-      if (data?.data?.Indexers) {
-        setSources(data.data.Indexers.map((indexer) => indexer.Name));
-      }
-    },
-  });
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!query) return;
-    setSearchUrl(`/api/search?q=${encodeURIComponent(query)}`);
-  }
-
-const filteredResults = useFilteredResults({
-  searchData,
-  sourceFilter,
-  seriesTypeFilter,
-  sortBy,
-  sortOrder
-});
-
-
-  useEffect(() => {
-    if (!query) {
-      setSearchUrl(null);
+    async function handleSubmit(e) {
+        e.preventDefault();
+        if (!query) return;
+        setSearchUrl(`/api/search?q=${encodeURIComponent(query)}`);
     }
-  }, [query]);
 
-  return (
-    <div className="w-[1200px] mx-auto flex flex-col min-h-screen py-6">
-      <div className="flex items-center gap-2">
-        <SearchBar query={query} setQuery={setQuery} handleSubmit={handleSubmit}/>
-        <Filter />
-      </div>
+    const filteredResults = useFilteredResults({
+        searchData,
+        sourceFilter,
+        seriesTypeFilter,
+        sortBy,
+        sortOrder,
+        categoryFilter,
+    });
 
-      {/* Error State */}
-      {error && (
-        <ErrorAlert />
-      )}
+    useEffect(() => {
+        if (!query) {
+            setSearchUrl(null);
+        }
+    }, [query]);
 
-      {/* Loading State */}
-      {isLoading && <SimpleSpinner />}
+    return (
+        <div className="w-[1200px] mx-auto flex flex-col min-h-screen py-6">
+            <div className="flex items-center gap-2">
+                <SearchBar
+                    query={query}
+                    setQuery={setQuery}
+                    handleSubmit={handleSubmit}
+                />
+                <Filter />
+            </div>
 
-      {/* Results */}
-      {!isLoading && !error && (
-        <div className="mt-5">
-          {/* Empty State - No Search Yet */}
-          {!searchUrl && (
-                <EmptySearch />
-          )}
+            {/* Error State */}
+            {error && <ErrorAlert />}
 
-          {/* Empty State - No Results */}
-          {searchUrl && filteredResults.length === 0 && query && (
-                <NoResults query={query} />
-          )}
+            {/* Loading State */}
+            {isLoading && <SimpleSpinner />}
 
-          {/* Results Table */}
-          {filteredResults.length > 0 && <Table results={filteredResults} />}
+            {/* Results */}
+            {!isLoading && !error && (
+                <div className="mt-5">
+                    {/* Empty State - No Search Yet */}
+                    {!searchUrl && <EmptySearch />}
+
+                    {/* Empty State - No Results */}
+                    {searchUrl && filteredResults.length === 0 && query && (
+                        <NoResults query={query} />
+                    )}
+
+                    {/* Results Table */}
+                    {filteredResults.length > 0 && (
+                        <Table results={filteredResults} />
+                    )}
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default Page;
